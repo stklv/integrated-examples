@@ -20,7 +20,6 @@
           "listen": [":443"],
           "routes": [{
             "match": [{
-              "protocol": "grpc",
               "path": ["/cdngrpc/*"] //与vless+grpc或vmess+grpc应用中serviceName对应
             }],
             "handle": [{
@@ -31,11 +30,14 @@
               },
               "upstreams": [{
                 "dial": "127.0.0.1:2009" //转发给本机vless+grpc或vmess+grpc监听端口
-              }]
-            }],
-            "terminal": true
+              }],
+              "flush_interval": -1
+            }]
           },
           {
+            "match": [{
+              "host": ["xx.yy"] //限定域名访问（禁止以ip方式访问网站），更改为自己的域名。
+            }],
             "handle": [{
               "handler": "headers",
               "response": {
@@ -46,14 +48,10 @@
             },
             {
               "handler": "file_server",
-              "root": "/var/www/html" //修改为自己存放的web文件路径
-            }],
-            "terminal": true
+              "root": "/var/www/html" //更改为自己存放的web文件路径
+            }]
           }],
           "tls_connection_policies": [{
-            "match": {
-              "sni": ["xx.yy"] //修改成自己的域名
-            },
             "cipher_suites": ["TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384","TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256","TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256"],
             "alpn": ["h2","http/1.1"]
           }]
@@ -62,7 +60,7 @@
     },
     "tls": {
       "certificates": {
-        "automate": ["xx.yy"] //修改成自己的域名
+        "automate": ["xx.yy"] //自动化管理域名证书（包括获取、更新证书及加载证书）。更改为自己的域名。
       }
     }
   }

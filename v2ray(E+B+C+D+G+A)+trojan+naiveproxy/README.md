@@ -22,7 +22,7 @@
 
 1、Xray 版本不小于 1.4.0 或 v2ray 版本不小于v4.36.2，才完美支持 gRPC 应用。
 
-2、caddy 加 caddy-l4 插件定制编译的才可以实现 SNI 分流，目前仅支持使用 json 配置。特别提醒：采用改进的 caddy-l4 插件定制编译的才同时支持 PROXY protocol（发送），且可以对进程或端口分别开启 PROXY protocol（发送）。
+2、caddy 加 caddy-l4 插件定制编译的才可以实现 SNI 分流，目前仅支持使用 json 配置。
 
 3、caddy 等于或大于 v2.2.0-rc.1 版才支持 h2c proxy，即支持 Xray\v2ray 的 h2c（gRPC） 反向代理。
 
@@ -38,8 +38,10 @@
 
 9、此方法采用的是 SNI 方式实现共用443端口，支持 Xray\v2ray（vless+tcp+tls）、naiveproxy（caddy）、trojan-go\trojan 完美共存，支持各自特色应用，但需多个域名（多个证书或通配符证书）来标记分流。
 
-10、配置1：采用端口分流、端口回落\分流、端口转发。配置2：采用进程分流（对应trojan-go\trojan采用端口分流）、端口回落\分流（分流vless+WS采用进程分流）、端口转发。配置3：采用进程分流（对应trojan-go\trojan采用端口分流）、端口回落\分流（分流vless+WS采用进程分流）、端口转发，且启用了 PROXY protocol（对应trojan-go\trojan除外）。
+10、不要使用非 caddy（自带 ACME 客户端） 的 ACME 客户端在当前服务器上申请与更新普通证书及密钥，因普通证书及密钥申请与更新需占用或监听80端口（或443端口），从而与当前应用端口冲突。
 
-11、若有实际网站服务推荐采用 [v2ray(E+B+C+D+G+A)+trojan+naiveproxy+nginx\haproxy](https://github.com/lxhao61/integrated-examples/tree/main/v2ray(E%2BB%2BC%2BD%2BG%2BA)%2Btrojan%2Bnaiveproxy%2Bnginx%5Chaproxy) 示例，否则 caddy（naiveproxy）压力过大。
+11、Xray 所需证书及密钥推荐使用 caddy 申请，配合 Xray（版本必须不低于v1.3.0）自动重载证书及密钥（OCSP Stapling），可实现证书及密钥申请与更新全自动化。
 
-12、可以使用 caddy 以 DNS API 方式申请证书与私钥，实现自动申请与更新证书与私钥，详见 [caddy(other configuration)](https://github.com/lxhao61/integrated-examples/tree/main/caddy(other%20configuration)) （caddy的特殊应用配置方法。）。
+12、配置1：采用端口分流、端口回落\分流、端口转发。配置2：采用进程分流（对应trojan-go\trojan采用端口分流）、端口回落\分流（分流vless+WS采用进程分流）、端口转发。配置3：采用进程分流（对应trojan-go\trojan采用端口分流）、端口回落\分流（分流vless+WS采用进程分流）、端口转发，且启用了 PROXY protocol（对应trojan-go\trojan除外）。
+
+13、若有实际网站服务推荐采用 [v2ray(E+B+C+D+G+A)+trojan+naiveproxy+nginx\haproxy](https://github.com/lxhao61/integrated-examples/tree/main/v2ray(E%2BB%2BC%2BD%2BG%2BA)%2Btrojan%2Bnaiveproxy%2Bnginx%5Chaproxy) 示例，否则 caddy（naiveproxy）压力过大。

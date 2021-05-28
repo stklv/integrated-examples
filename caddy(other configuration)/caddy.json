@@ -1,73 +1,216 @@
-//原回落配置的相关参数：
-.........<省略>........
+//一、开放式文件服务器应用配置
+//.........<省略>........
+          {
+            "match": [{
+              "host": ["xx.yy"] //限定域名访问（禁止以ip方式访问网站），更改为自己的域名。
+            }],
+            "handle": [{
+              "handler": "headers",
+              "response": {
+                "set": {
+                  "Strict-Transport-Security": ["max-age=31536000; includeSubDomains; preload"] //启用HSTS
+                }
+              }
+            },
             {
               "handler": "file_server",
-              "root": "/var/www/html" //修改成自己存放的web文件路径
-            }],
-.........<省略>........
+              "root": "/home/file", //更改为自己的文件服务器存放文件路径
+              "browse": {} //启用文件列表
+            }]
+          }, //此部分参数放在应用结尾，‘},’调整为‘}],’。
+//.........<省略>........
+//备注：
+//1、同一个域名下，文件服务器与回落或代理网站不能共存，所有示例的回落或代理网站可参考上边调整为开放式文件服务器应用配置。
+//2、不同一个域名下，文件服务器配置可直接插入示例的回落或代理网站配置之前或之后，另外同步调整域名或证书及密钥。
 
-//分别回落分流到不同网站，以上参数修改为如下：（示例仅配置了两个网站/域名的回落分流；如需要多个网站/域名，增加对应参数即可。）
+
+//二、验证式文件服务器应用配置
+//.........<省略>........
+          {
+            "match": [{
+              "host": ["xx.yy"] //限定域名访问（禁止以ip方式访问网站），更改为自己的域名。
+            }],
+            "handle": [{
+              "handler": "headers",
+              "response": {
+                "set": {
+                  "Strict-Transport-Security": ["max-age=31536000; includeSubDomains; preload"] //启用HSTS
+                }
+              }
+            },
+            {
+              "handler": "authentication",
+              "providers": {
+                "http_basic": {
+                  "accounts": [{ //可以设置多组验证用户及密码
+                    "username": "user", //验证用户
+                    "password": "JDJhJDE0JGMzclpVMkU4bVhMRVRXY0o2a2pmMnVGUDNqcGxGZ3ByY1ZTMEVDbi80N1M0NE93NUZXZXNl" //验证用户的哈希密码，以base64编码。示例为password的哈希密码。
+                  }],
+                  "hash_cache": {}
+                }
+              }
+            },
+            {
+              "handler": "file_server",
+              "root": "/home/file", //更改为自己的文件服务器存放文件路径
+              "browse": {} //启用文件列表
+            }]
+          }, //此部分参数放在应用结尾，‘},’调整为‘}],’。
+//.........<省略>........
+//备注：
+//1、同一个域名下，文件服务器与回落或代理网站不能共存，所有示例的回落或代理网站不建议参考上边调整为验证式文件服务器应用配置。
+//2、不同一个域名下，文件服务器配置可直接插入示例的回落或代理网站配置之前或之后，另外同步调整域名或证书及密钥。
+
+
+//三、验证式webdav服务器应用配置
+//.........<省略>........
+          {
+            "match": [{
+              "host": ["xx.yy"], //限定域名访问（禁止以ip方式访问网站），更改为自己的域名。
+              "not": [{
+                "method": ["GET"]
+              }]
+            }],
+            "handle": [{
+              "handler": "authentication",
+              "providers": {
+                "http_basic": {
+                  "accounts": [{ //可以设置多组验证用户及密码
+                    "username": "user", //验证用户
+                    "password": "JDJhJDE0JGMzclpVMkU4bVhMRVRXY0o2a2pmMnVGUDNqcGxGZ3ByY1ZTMEVDbi80N1M0NE93NUZXZXNl" //验证用户的哈希密码，以base64编码。示例为password的哈希密码。
+                  }],
+                  "hash_cache": {}
+                }
+              }
+            },
+            {
+              "handler": "webdav",
+              "root": "/home/webdav"  //更改为自己的webdav服务器存放文件路径
+            }]
+          }, //此部分参数放在应用结尾，‘},’调整为‘}],’。
+//.........<省略>........
+//备注：
+//1、修改/home/webdav的webdav权限为0777，以便客户端具有写入及删除文件权限。
+//2、同一个域名下，文件服务器与回落或代理网站可以共存，文件服务器配置直接插入示例的回落或代理网站配置之前或之后都可。
+//3、用caddy hash-password --plaintext <password>命令把普通密码转化为哈希密码并输出base64。例如：/usr/bin/caddy hash-password --plaintext password
+
+
+//四、开放式文件服务器+验证式webdav服务器融合应用配置
+//.........<省略>........
+          {
+            "match": [{
+              "host": ["zz.xx.yy"] //限定域名访问（禁止以ip方式访问网站），更改为自己的域名。
+            }],
+            "handle": [{
+              "handler": "headers",
+              "response": {
+                "set": {
+                  "Strict-Transport-Security": ["max-age=31536000; includeSubDomains; preload"] //启用HSTS
+                }
+              }
+            },
             {
               "handler": "subroute",
               "routes": [{
-                "match": [{
-                  "host": ["za.xx.yy"] //修改成自己分流的域名
-                }],
                 "handle": [{
-                  "handler": "file_server",
-                  "root": "/var/www/za" //修改为域名对应存放的web文件路径
-                }],
-                "terminal": true
+                  "handler": "vars",
+                  "root": "/home/webdav" //更改为自己的服务器存放文件路径
+                }]
               },
               {
                 "match": [{
-                  "host": ["zb.xx.yy"] //修改成自己分流的域名
+                  "not": [{
+                    "method": ["GET"]
+                  }]
                 }],
                 "handle": [{
+                  "handler": "authentication",
+                  "providers": {
+                    "http_basic": {
+                      "accounts": [{ //可以设置多组验证用户及密码
+                        "username": "user", //验证用户
+                        "password": "JDJhJDE0JGMzclpVMkU4bVhMRVRXY0o2a2pmMnVGUDNqcGxGZ3ByY1ZTMEVDbi80N1M0NE93NUZXZXNl" //验证用户的哈希密码，以base64编码。示例为password的哈希密码。
+                      }],
+                      "hash_cache": {}
+                    }
+                  }
+                },
+                {
+                  "handler": "webdav"
+                }]
+              },
+              {
+                "handle": [{
                   "handler": "file_server",
-                  "root": "/var/www/zb" //修改为域名对应存放的web文件路径
-                }],
-                "terminal": true
+                  "browse": {}
+                }]
               }]
-            }],
-.........<省略>........
+            }]
+          }, //此部分参数放在应用结尾，‘},’调整为‘}],’。
+//备注：
+//1、此组合应用适合为大众提供文件分享及专业的后台管理服务。
+//2、两部分中"host"与"root"参数值要对应保持一致。其中"root"参数可以使用vars应用合并。
+//3、修改/home/webdav的webdav权限为0777，以便客户端具有写入及删除文件权限。
+//4、所有示例的回落或代理网站可参考调整为开放式文件服务器+验证式webdav服务器融合应用配置。
+//5、用caddy hash-password --plaintext <password>命令把普通密码转化为哈希密码并输出base64。例如：/usr/bin/caddy hash-password --plaintext password
 
-//若实际网站应用，建议配置如下：
+
+//五、验证式文件服务器+验证式webdav服务器融合应用配置
+//.........<省略>........
+          {
+            "match": [{
+              "host": ["zz.xx.yy"] //限定域名访问（禁止以ip方式访问网站），更改为自己的域名。
+            }],
+            "handle": [{
+              "handler": "headers",
+              "response": {
+                "set": {
+                  "Strict-Transport-Security": ["max-age=31536000; includeSubDomains; preload"] //启用HSTS
+                }
+              }
+            },
+            {
+              "handler": "authentication",
+              "providers": {
+                "http_basic": {
+                  "accounts": [{ //可以设置多组验证用户及密码
+                    "username": "user", //验证用户
+                    "password": "JDJhJDE0JGMzclpVMkU4bVhMRVRXY0o2a2pmMnVGUDNqcGxGZ3ByY1ZTMEVDbi80N1M0NE93NUZXZXNl" //验证用户的哈希密码，以base64编码。示例为password的哈希密码。
+                  }],
+                  "hash_cache": {}
+                }
+              }
+            }, 
             {
               "handler": "subroute",
               "routes": [{
-                "match": [{
-                  "host": ["za.xx.yy"] //修改成自己分流的域名
-                }],
                 "handle": [{
-                  "handler": "encode", //启用编码压缩（此部分参数是网站应用优化，虽与回落分流无关，但建议添加此部分。）
-                  "encodings": {
-                    "gzip": {"level": 4}, //gzip压缩等级（此部分参数是网站应用优化，虽与回落分流无关，但建议添加此部分。）
-                    "zstd": {}
-                  }
-                },
-                {
-                  "handler": "file_server",
-                  "root": "/var/www/za" //修改为域名对应存放的web文件路径
-                }],
-                "terminal": true
+                  "handler": "vars",
+                  "root": "/home/webdav" //更改为自己的服务器存放文件路径
+                }]
               },
               {
                 "match": [{
-                  "host": ["zb.xx.yy"] //修改成自己分流的域名
+                  "not": [{
+                    "method": ["GET"]
+                  }]
                 }],
                 "handle": [{
-                  "handler": "encode", //启用编码压缩（此部分参数是网站应用优化，虽与回落分流无关，但建议添加此部分。）
-                  "encodings": {
-                    "gzip": {"level": 4}, //gzip压缩等级（此部分参数是网站应用优化，虽与回落分流无关，但建议添加此部分。）
-                    "zstd": {}
-                  }
-                },
-                {
+                  "handler": "webdav"
+                }]
+              },
+              {
+                "handle": [{
                   "handler": "file_server",
-                  "root": "/var/www/zb" //修改为域名对应存放的web文件路径
-                }],
-                "terminal": true
+                  "browse": {}
+                }]
               }]
-            }],
-.........<省略>........
+            }]
+          }, //此部分参数放在应用结尾，‘},’调整为‘}],’。
+//.........<省略>........
+//备注：
+//1、此组合应用适合为个人或特定人群提供专业文件管理服务。
+//2、两部分中"host"与"root"参数值要对应保持一致。其中"root"参数可以使用vars应用合并。
+//3、修改/home/webdav的webdav权限为0777，以便客户端具有写入及删除文件权限。
+//4、所有示例的回落或代理网站不建议参考上边调整为验证式文件服务器+验证式webdav服务器融合应用配置。建议增加域名来对应组合应用，实现与原示例的回落或代理网站应用并行。
+//5、用caddy hash-password --plaintext <password>命令把普通密码转化为哈希密码并输出base64。例如：/usr/bin/caddy hash-password --plaintext password

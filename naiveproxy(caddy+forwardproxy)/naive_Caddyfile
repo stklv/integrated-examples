@@ -1,34 +1,37 @@
 {
     order forward_proxy before header
     admin off
+    log { #注意：版本不小于v2.4.0才支持日志全局配置，否则各自配置。
+        output file /var/log/caddy/access.log
+        level ERROR
+    }
     servers :443 {
         protocol {
-            experimental_http3 //开启http3 server支持
+            experimental_http3 #开启http3 server支持
         }
     }
 }
 
-:443, xx.yy { //xx.yy修改成自己的域名
+:443, xx.yy { #xx.yy更改为自己的域名。注意：逗号与域名之间有一个空格。
     tls {
         ciphers TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
         alpn h2 http/1.1
     }
-    log {
-        output file /var/log/caddy/access.log
-        level  ERROR
-    }
 
     forward_proxy {
-        basic_auth user pass //naiveproxy账号与密码，修改为自己的。
+        basic_auth user pass #naiveproxy账号与密码，更改为自己的。
         hide_ip
         hide_via
-        probe_resistance unsplash.com:443
+        probe_resistance
     }
 
-    header {
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" //启用HSTS
+    @host {
+        host xx.yy #限定域名访问（禁止以ip方式访问网站），更改为自己的域名。
     }
-    file_server {
-        root /var/www/html //修改成自己存放的web文件路径
+    header @host {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" #启用HSTS
+    }
+    file_server @host {
+        root /var/www/html #更改为自己存放的web文件路径
     }
 }
