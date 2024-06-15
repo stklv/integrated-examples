@@ -1,0 +1,41 @@
+#1、Hysteria2 的 HTTP/3 配置（如下）：
+listen: :443 #HTTP/3 监听端口
+
+acme:
+  domains:
+    - xx.yy #修改为自己的域名
+  email: your@email.com #修改为自己的电子邮箱。（选配）
+
+auth:
+  type: password #单用户验证密码模式。若使用多用户验证密码模式，请参考官方示例调整配置。
+  password: 123a65h7890 #单用户验证密码，修改为自己的。
+
+masquerade:
+  listenHTTP: :80 #HTTP/1.1 监听端口
+  listenHTTPS: :443 #HTTPS 监听端口
+  forceHTTPS: true #HTTP 自动跳转 HTTPS 开启
+  type: file #配置静态文件服务器。若配置反向代理，请参考官方示例调整配置。
+  file:
+    dir: /var/www/html #修改为自己存放的 WEB 文件路径
+
+#备注：上面示例仅推荐独自使用，可提供完整的 HTTP/3 伪装网站。
+
+
+#2、Hysteria2 的混淆配置（如下）：
+listen: :2083 #UDP 监听端口
+
+acme:
+  domains:
+    - xx.yy #修改为自己的域名
+  email: your@email.com #修改为自己的电子邮箱。（选配）
+
+obfs:
+  type: salamander
+  salamander:
+    password: 3452e3b8k2 #混淆密码，修改为自己的。
+
+auth:
+  type: password #单用户验证密码模式。若使用多用户验证密码模式，请参考官方示例调整配置。
+  password: 123a65h7890 #单用户验证密码，修改为自己的。
+
+#备注：如果你的网络针对性屏蔽了 QUIC 或 HTTP/3 流量（但允许其他 UDP 流量），推荐独自使用上面混淆配置来解决。
