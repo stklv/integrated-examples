@@ -24,17 +24,16 @@
             "address": "xx.yy", //修改为服务端分配的域名
             "port": 443,
             "method": "chacha20-poly1305", //修改为服务端配置的加密方式
-            "password": "diy443", //修改为服务端配置的密码或密钥
-            "ota": false
+            "password": "diy443" //修改为服务端配置的密码/密钥
           }
         ]
       },
       "streamSettings": {
+        "network": "grpc",
         "security": "tls",
         "tlsSettings": {
           "fingerprint": "chrome" //模拟 TLS 指纹，可任一 chrome、firefox、safari、ios、edge、qq、random、randomized 选项配置。
         }, //仅 Xray 支持此应用，否则必须删除此部分配置。
-        "network": "grpc",
         "grpcSettings": {
           "serviceName": "sdngrpc" //修改为服务端配置的 gRPC 服务名称
         }

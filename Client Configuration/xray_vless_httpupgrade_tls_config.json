@@ -33,11 +33,11 @@
         ]
       },
       "streamSettings": {
+        "network": "httpupgrade",
         "security": "tls",
         "tlsSettings": {
           "fingerprint": "chrome" //模拟 TLS 指纹，可任一 chrome、firefox、safari、ios、edge、qq、random、randomized 选项配置。
         },
-        "network": "httpupgrade",
         "httpupgradeSettings": {
           "path": "/ChttpZ9k" //修改为服务端配置的路径。大于 Xray-core v1.8.9 版本，路径后加上 ?ed=2560 即可开启 HttpUpgrade 0-RTT。
         }

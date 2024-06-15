@@ -36,7 +36,6 @@
         "network": "h2",
         "security": "reality",
         "realitySettings": {
-          "show": false,
           "fingerprint": "chrome", //模拟 TLS 指纹，可任一 chrome、firefox、safari、ios、edge、qq、random、randomized 选项配置。
           "serverName": "xx.yy", //修改为服务端配置的域名
           "publicKey": "XZImaWSkHZeFYMkLBVr8lywIhYg9uZw8pTYhOb8Axl4", //修改为服务端私钥的对应公钥

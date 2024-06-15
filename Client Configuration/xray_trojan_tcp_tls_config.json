@@ -28,12 +28,11 @@
         ]
       },
       "streamSettings": {
+        "network": "tcp",
         "security": "tls",
         "tlsSettings": {
           "fingerprint": "chrome" //模拟 TLS 指纹，可任一 chrome、firefox、safari、ios、edge、qq、random、randomized 选项配置。
-        },
-        "network": "tcp",
-        "tcpSettings": {}
+        }
       }
     },
     {

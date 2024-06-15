@@ -23,9 +23,8 @@
           {
             "address": "2.2.2.2", //修改为服务端的 IP
             "port": 443,
-            "method": "2022-blake3-chacha20-poly1305", //修改为服务端配置的加密方式
-            "password": "SS9xpkM0BXSfSyPqzXo6hE94TSMG6P0EHDEb9NgSZ3k=", //修改为服务端配置的密钥
-            "ota": false
+            "method": "chacha20-poly1305", //修改为服务端配置的加密方式
+            "password": "diy443" //修改为服务端配置的密码/密钥
           }
         ]
       },
@@ -33,7 +32,6 @@
         "network": "grpc",
         "security": "reality",
         "realitySettings": {
-          "show": false,
           "fingerprint": "chrome", //模拟 TLS 指纹，可任一 chrome、firefox、safari、ios、edge、qq、random、randomized 选项配置。
           "serverName": "xx.yy", //修改为服务端配置的域名
           "publicKey": "FBKojrtPcbmOkaPvRDp1mCJllWyPE8Ye4a0tudGtMyU", //修改为服务端私钥的对应公钥

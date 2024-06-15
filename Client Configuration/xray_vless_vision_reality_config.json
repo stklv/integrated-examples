@@ -37,7 +37,6 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "show": false,
           "fingerprint": "chrome", //模拟 TLS 指纹，可任一 chrome、firefox、safari、ios、edge、qq、random、randomized 选项配置。
           "serverName": "xx.yy", //修改为服务端配置的域名
           "publicKey": "DsQx461u0W36DcLxN0jCuIjt944GeVdtTfPReoUqTwI", //修改为服务端私钥的对应公钥

@@ -33,7 +33,6 @@
         ]
       },
       "streamSettings": {
-        "security": "none",
         "network": "kcp",
         "kcpSettings": {
           "congestion": true,
