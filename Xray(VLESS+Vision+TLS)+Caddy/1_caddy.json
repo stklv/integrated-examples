@@ -42,7 +42,8 @@
         "srvh2c": {
           "listen": ["127.0.0.1:88"], //H2C server 及 HTTP/1.1 server 本地监听端口
           "listener_wrappers": [{
-            "wrapper": "proxy_protocol" //开启 PROXY protocol 接收
+            "wrapper": "proxy_protocol", //开启 PROXY protocol 接收
+            "allow": ["127.0.0.1/32"]
           }],
           "routes": [{
             "handle": [{
